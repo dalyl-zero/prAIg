@@ -77,7 +77,7 @@ void VirtualMachine::execute() {
                 if (currentLine.second > 0)
                     executionAddress += currentLine.second + 1;
                 if (currentLine.second < 0)
-                    executionAddress += currentLine.second;
+                    executionAddress += currentLine.second - 1;
                 if (executionAddress < 0 || executionAddress > code.size())
                     throw std::logic_error("Stack Overflow Error");
                 break;
