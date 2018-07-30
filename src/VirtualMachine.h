@@ -23,11 +23,13 @@ public:
     };
 
     VirtualMachine();
-    void execute(OpCodes opCode, MemType operand = 0);
+    void setCode(OpCodes opCode, MemType operand = 0);
+    void execute();
+
 private:
     std::vector<MemType> stack;
-    MemType jump;
-    std::vector<std::pair<OpCodes, MemType> > states;
+    MemType executionAddress;
+    std::vector<std::pair<OpCodes, MemType> > code;
 };
 
 
