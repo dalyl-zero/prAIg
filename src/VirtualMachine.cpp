@@ -17,7 +17,6 @@ void VirtualMachine::setCode(VirtualMachine::OpCodes opCode, VirtualMachine::Mem
 
 void VirtualMachine::execute() {
     while (executionAddress < code.size()) {
-        std::cout << executionAddress << std::endl;
         auto currentLine{ code[executionAddress] };
         switch (currentLine.first) {
             case OpCodes::PUSH: {
