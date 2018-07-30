@@ -19,7 +19,8 @@ public:
         DIV,
         PRINT,
         INPUT,
-        JUMP
+        JUMP,
+        JIZ
     };
 
     VirtualMachine();

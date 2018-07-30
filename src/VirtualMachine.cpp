@@ -30,6 +30,8 @@ void VirtualMachine::execute() {
                 break;
             }
             case OpCodes::ADD: {
+                if (stack.empty())
+                    throw std::logic_error("Stack Underflow Error");
                 MemType add{stack.back()};
                 setCode(OpCodes::POP);
                 add += stack.back();
@@ -38,6 +40,8 @@ void VirtualMachine::execute() {
                 break;
             }
             case OpCodes::SUB: {
+                if (stack.empty())
+                    throw std::logic_error("Stack Underflow Error");
                 MemType sub{stack.back()};
                 setCode(OpCodes::POP);
                 sub -= stack.back();
@@ -46,6 +50,8 @@ void VirtualMachine::execute() {
                 break;
             }
             case OpCodes::MUL: {
+                if (stack.empty())
+                    throw std::logic_error("Stack Underflow Error");
                 MemType mul{stack.back()};
                 setCode(OpCodes::POP);
                 mul *= stack.back();
@@ -54,6 +60,8 @@ void VirtualMachine::execute() {
                 break;
             }
             case OpCodes::DIV: {
+                if (stack.empty())
+                    throw std::logic_error("Stack Underflow Error");
                 MemType div{stack.back()};
                 setCode(OpCodes::POP);
                 if (stack.back() == 0)
@@ -64,6 +72,8 @@ void VirtualMachine::execute() {
                 break;
             }
             case OpCodes::PRINT: {
+                if (stack.empty())
+                    throw std::logic_error("Stack Underflow Error");
                 std::cout << stack.back() << std::endl;
                 break;
             }
@@ -80,6 +90,15 @@ void VirtualMachine::execute() {
                     executionAddress += currentLine.second - 1;
                 if (executionAddress < 0 || executionAddress > code.size())
                     throw std::logic_error("Stack Overflow Error");
+                break;
+            }
+            case OpCodes::JIZ: {
+                if (stack.empty())
+                    throw std::logic_error("Stack Underflow Error");
+                if (stack.back() == 0) {
+                    setCode(OpCodes::POP);
+                    setCode(OpCodes::JUMP, currentLine.second);
+                }
                 break;
             }
         }
