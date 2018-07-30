@@ -95,10 +95,9 @@ void VirtualMachine::execute() {
             case OpCodes::JIZ: {
                 if (stack.empty())
                     throw std::logic_error("Stack Underflow Error");
-                if (stack.back() == 0) {
-                    setCode(OpCodes::POP);
+                setCode(OpCodes::POP);
+                if (stack.back() == 0)
                     setCode(OpCodes::JUMP, currentLine.second);
-                }
                 break;
             }
         }
