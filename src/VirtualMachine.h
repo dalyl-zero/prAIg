@@ -1,37 +1,51 @@
-//
-// Created by Dalyl on 30/07/2018.
-//
-
-#ifndef PRAIG_VIRTUALMACHINE_H
-#define PRAIG_VIRTUALMACHINE_H
+#pragma once
 
 #include <vector>
 
-class VirtualMachine {
+class VirtualMachine 
+{
 public:
     using MemType = int;
-    enum class OpCodes {
+    enum class OpCode
+    {
         PUSH,
         POP,
+
         ADD,
         SUB,
         MUL,
         DIV,
+
+        JMP,
+        JIZ,
+        JNZ,
+
         PRINT,
         INPUT,
-        JUMP,
-        JIZ
+
+        END,
     };
 
-    VirtualMachine();
-    void setCode(OpCodes opCode, MemType operand = 0);
-    void execute();
+    struct Code
+    {
+        OpCode opCode;
+        MemType operand = 0;
+    };
+
+    using Program = std::vector<Code>;
+
+    void setProgram(const Program& program);
+    void executeProgram();
+    void executeProgram(const Program& program);
 
 private:
+    void executeCode(const Code& code);
+    void executeCode(OpCode opCode, MemType operand = 0);
+
+
+    MemType popStack();
+
     std::vector<MemType> stack;
-    MemType executionAddress;
-    std::vector<std::pair<OpCodes, MemType> > code;
+    MemType currentAddress = 0;
+    Program program;
 };
-
-
-#endif //PRAIG_VIRTUALMACHINE_H
