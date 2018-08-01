@@ -46,6 +46,12 @@ void VirtualMachine::executeCode(const Code& code)
             popStack();
             break;
         }
+        case OpCode::DUP:
+        {
+
+            executeCode(OpCode::PUSH, stack.back());
+            break;
+        }
         case OpCode::ADD:
         {
             MemType value = popStack();
@@ -85,6 +91,11 @@ void VirtualMachine::executeCode(const Code& code)
             std::cout << popStack() << std::endl;
             break;
         }
+        case OpCode::PRINT_CHAR:
+        {
+            std::cout << static_cast<char>(popStack()) << std::endl;
+            break;
+        }
         case OpCode::INPUT: 
         {
             MemType input;
@@ -122,11 +133,43 @@ void VirtualMachine::executeCode(const Code& code)
             }
             break;
         }
-        case OpCode::END: 
+        case OpCode::JIP:
         {
-            currentAddress = program.size();
+            const MemType value = popStack();
+            if (value > 0)
+            {
+                executeCode(OpCode::JMP, code.operand);
+            }
             break;
         }
+        case OpCode::JIN:
+        {
+            const MemType value = popStack();
+            if (value < 0)
+            {
+                executeCode(OpCode::JMP, code.operand);
+            }
+            break;
+        }
+/*        case OpCode::CALL:
+        {
+            executeCode(OpCode::PUSH, currentAddress);
+            executeCode(OpCode::JMP, code.operand);
+            break;
+        }
+        case OpCode::RETURN:
+        {
+            const MemType value = popStack();
+            currentAddress = value;
+            break;
+        }*/
+        case OpCode::END: 
+        {
+            currentAddress = static_cast<MemType>(program.size());
+            break;
+        }
+        default:
+            break;
     }
 }
 

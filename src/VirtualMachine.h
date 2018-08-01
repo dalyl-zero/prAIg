@@ -10,6 +10,7 @@ public:
     {
         PUSH,
         POP,
+        DUP,
 
         ADD,
         SUB,
@@ -19,9 +20,15 @@ public:
         JMP,
         JIZ,
         JNZ,
+        JIP,
+        JIN,
 
         PRINT,
+        PRINT_CHAR,
         INPUT,
+
+        CALL,
+        RETURN,
 
         END,
     };
@@ -41,7 +48,6 @@ public:
 private:
     void executeCode(const Code& code);
     void executeCode(OpCode opCode, MemType operand = 0);
-
 
     MemType popStack();
 
