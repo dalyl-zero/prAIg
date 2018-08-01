@@ -3,80 +3,112 @@
 #include "VirtualMachine.h"
 
 using OpCode = VirtualMachine::OpCode;
+using Code = VirtualMachine::Code;
 
-int main() 
-{
+int main() {
 	VirtualMachine vm;
 
-	vm.executeProgram(
-	{
-		{OpCode::PUSH, 1},
-		{OpCode::PRINT},
-	});
+	std::vector<Code> minmax{
+            {OpCode::JMP, 32},
 
-	std::cout << "printed: 1" << std::endl << std::endl;
+            {OpCode::PUSH, '!'},
+            {OpCode::PUSH, 'r'},
+            {OpCode::PUSH, 'e'},
+            {OpCode::PUSH, 'h'},
+            {OpCode::PUSH, 'g'},
+            {OpCode::PUSH, 'i'},
+            {OpCode::PUSH, 'H'},
+            {OpCode::PUSH, '\n'},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
 
-	vm.executeProgram(
-	{
-		{OpCode::PUSH, 1},
-		{OpCode::PUSH, 2},
-		{OpCode::ADD},
-		{OpCode::PRINT},
-	});
+            {OpCode::JMP, 15},
 
-	std::cout << "printed: 3" << std::endl << std::endl;
+            {OpCode::PUSH, '!'},
+            {OpCode::PUSH, 'r'},
+            {OpCode::PUSH, 'e'},
+            {OpCode::PUSH, 'w'},
+            {OpCode::PUSH, 'o'},
+            {OpCode::PUSH, 'L'},
+            {OpCode::PUSH, '\n'},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
 
-	vm.executeProgram(
-	{
-		{OpCode::PUSH, 1},
-		{OpCode::PUSH, 2},
-		{OpCode::PUSH, 3},
-		{OpCode::POP},
-		{OpCode::PRINT},
-		{OpCode::PRINT},
-	});
+            {OpCode::PUSH, ':'},
+            {OpCode::PUSH, 'r'},
+            {OpCode::PUSH, 'e'},
+            {OpCode::PUSH, 'b'},
+            {OpCode::PUSH, 'm'},
+            {OpCode::PUSH, 'u'},
+            {OpCode::PUSH, 'n'},
+            {OpCode::PUSH, ' '},
+            {OpCode::PUSH, 'e'},
+            {OpCode::PUSH, 'h'},
+            {OpCode::PUSH, 't'},
+            {OpCode::PUSH, ' '},
+            {OpCode::PUSH, 's'},
+            {OpCode::PUSH, 's'},
+            {OpCode::PUSH, 'e'},
+            {OpCode::PUSH, 'u'},
+            {OpCode::PUSH, 'G'},
+            {OpCode::PUSH, '\n'},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
 
-	std::cout << "printed: 2, 1" << std::endl << std::endl;
+            {OpCode::PUSH, 29}, // The random number ! Please make it random :(
+            {OpCode::INPUT},
+            {OpCode::SUB},
+            {OpCode::DUP},
 
-	vm.executeProgram(
-	{
-		{OpCode::PUSH, 1},
-		{OpCode::PUSH, 2},
-		{OpCode::PUSH, 3},
-		{OpCode::JMP, 3},
-		{OpCode::POP},
-		{OpCode::PRINT},
-		{OpCode::PRINT},
-	});
+            {OpCode::JIP, -54},
+            {OpCode::JIN, -72},
 
-	std::cout << "printed: 3" << std::endl << std::endl;
+            {OpCode::PUSH, '!'},
+            {OpCode::PUSH, 't'},
+            {OpCode::PUSH, 'c'},
+            {OpCode::PUSH, 'e'},
+            {OpCode::PUSH, 'r'},
+            {OpCode::PUSH, 'r'},
+            {OpCode::PUSH, 'o'},
+            {OpCode::PUSH, 'C'},
+            {OpCode::PUSH, '\n'},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+            {OpCode::PRINT_CHAR},
+	};
 
-	vm.executeProgram(
-	{
-		{OpCode::JMP, 2},
-		{OpCode::END},
-		{OpCode::PUSH, 2},
-		{OpCode::PUSH, 3},
-		{OpCode::PUSH, 3},
-		{OpCode::JIZ, -4},
-		{OpCode::PRINT},
-		{OpCode::SUB},
-		{OpCode::JIZ, -7},
-		{OpCode::PRINT},
-	});
-
-	std::cout << "printed: 3" << std::endl << std::endl;
-
-	vm.executeProgram(
-	{
-		{OpCode::PUSH, 2},
-		{OpCode::JNZ, 2},
-		{OpCode::END},
-		{OpCode::PUSH, 2},
-		{OpCode::PRINT},
-	});
-
-	std::cout << "printed: 2" << std::endl << std::endl;
-
-    return 0;
+	vm.executeProgram(minmax);
 }
