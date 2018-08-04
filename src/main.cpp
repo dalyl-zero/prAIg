@@ -5,7 +5,7 @@
 //using OpCode = VirtualMachine::OpCode;
 //using Code = VirtualMachine::Code;
 
-#include "generateCode.h"
+#include "Mutator.h"
 
 int main() {
 	VirtualMachine vm;

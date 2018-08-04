@@ -58,4 +58,8 @@ const std::string filePath("../log/test.ai");
 constexpr int codeSize{ 128 };
 
 void logCode(const Program& program);
+void insert(const Code& code, Program& program);
+void remove(const Program& program);
+void edit(MemType& operand);
+void random(OpCode& opCode);
 Program generateCode();
