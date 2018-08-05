@@ -2,9 +2,8 @@
 
 #include <vector>
 
-class VirtualMachine 
+namespace vm
 {
-public:
     using MemType = int;
     enum class OpCode
     {
@@ -40,14 +39,20 @@ public:
     };
 
     using Program = std::vector<Code>;
+}
 
+using namespace vm;
+
+class VirtualMachine 
+{
+public:
     void setProgram(const Program& program);
     void executeProgram();
     void executeProgram(const Program& program);
 
 private:
     void executeCode(const Code& code);
-    void executeCode(OpCode opCode, MemType operand = 0);
+    void executeCode(OpCode& opCode, MemType operand = 0);
 
     MemType popStack();
 

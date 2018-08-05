@@ -8,13 +8,12 @@
 #include <stdexcept>
 #include <iostream>
 
-
 void VirtualMachine::setProgram(const Program& program)
 {
     this->program = program;
 }
 
-VirtualMachine::MemType VirtualMachine::popStack()
+MemType VirtualMachine::popStack()
 {
     if (stack.empty())
     {
@@ -27,7 +26,7 @@ VirtualMachine::MemType VirtualMachine::popStack()
     return value;
 }
 
-void VirtualMachine::executeCode(OpCode opCode, MemType operand)
+void VirtualMachine::executeCode(OpCode& opCode, MemType operand)
 {
     executeCode({opCode, operand});
 }
@@ -48,7 +47,6 @@ void VirtualMachine::executeCode(const Code& code)
         }
         case OpCode::DUP:
         {
-
             executeCode(OpCode::PUSH, stack.back());
             break;
         }
@@ -75,15 +73,15 @@ void VirtualMachine::executeCode(const Code& code)
         }
         case OpCode::DIV: 
         {
-            const MemType value = popStack();
-            const MemType divider = popStack();
+            MemType dividend = popStack();
+            MemType divisor = popStack();
 
-            if (divider == 0)
+            if (divisor == 0)
             {
                 throw std::logic_error("Math Error: Division by zero");
             }
 
-            executeCode(OpCode::PUSH, value / divider);
+            executeCode(OpCode::PUSH, dividend / divisor);
             break;
         }
         case OpCode::PRINT: 
@@ -117,7 +115,7 @@ void VirtualMachine::executeCode(const Code& code)
         }
         case OpCode::JIZ: 
         {
-            const MemType value = popStack();
+            MemType value = popStack();
             if (value == 0)
             {
                 executeCode(OpCode::JMP, code.operand);
@@ -126,7 +124,7 @@ void VirtualMachine::executeCode(const Code& code)
         }
         case OpCode::JNZ: 
         {
-            const MemType value = popStack();
+            MemType value = popStack();
             if (value != 0)
             {
                 executeCode(OpCode::JMP, code.operand);
@@ -135,7 +133,7 @@ void VirtualMachine::executeCode(const Code& code)
         }
         case OpCode::JIP:
         {
-            const MemType value = popStack();
+            MemType value = popStack();
             if (value > 0)
             {
                 executeCode(OpCode::JMP, code.operand);
@@ -144,7 +142,7 @@ void VirtualMachine::executeCode(const Code& code)
         }
         case OpCode::JIN:
         {
-            const MemType value = popStack();
+            MemType value = popStack();
             if (value < 0)
             {
                 executeCode(OpCode::JMP, code.operand);

@@ -9,57 +9,94 @@
 
 std::random_device device;
 std::default_random_engine generate(device());
-std::uniform_int_distribution<int> randomPosition(0, codeSize - 1);
-std::uniform_int_distribution<int> randomOpCode(0, static_cast<int>(OpCodeList.size() - 1));
-std::uniform_int_distribution<int> randomOperand(0, codeSize);
+std::uniform_int_distribution<int> randomPosition(0, Mutator::codeSize - 1);
+std::uniform_int_distribution<int> randomOpCode(0, static_cast<int>(Mutator::OpCodeList.size() - 1));
+std::uniform_int_distribution<int> randomOperand(0, Mutator::codeSize);
 
-void logCode(const Program& program)
+const std::vector<OpCode> Mutator::OpCodeList = {
+    OpCode::PUSH,
+    OpCode::POP,
+    OpCode::DUP,
+    OpCode::ADD,
+    OpCode::SUB,
+    OpCode::MUL,
+    OpCode::DIV,
+    OpCode::JMP,
+    OpCode::JIZ,
+    OpCode::JNZ,
+    OpCode::JIP,
+    OpCode::JIN,
+    OpCode::PRINT,
+    OpCode::PRINT_CHAR,
+    OpCode::INPUT,
+    OpCode::CALL,
+    OpCode::RETURN,
+    OpCode::END
+};
+
+const std::map<OpCode, std::string> Mutator::opCodeString = {
+    {OpCode::PUSH, "PUSH"},
+    {OpCode::POP, "POP"},
+    {OpCode::DUP, "DUP"},
+    {OpCode::ADD, "ADD"},
+    {OpCode::SUB, "SUB"},
+    {OpCode::MUL, "MUL"},
+    {OpCode::DIV, "DIV"},
+    {OpCode::JMP, "JMP"},
+    {OpCode::JIZ, "JIZ"},
+    {OpCode::JNZ, "JNZ"},
+    {OpCode::JIP, "JIP"},
+    {OpCode::JIN, "JIN"},
+    {OpCode::PRINT, "PRINT"},
+    {OpCode::PRINT_CHAR, "PRINT_CHAR"},
+    {OpCode::INPUT, "INPUT"},
+    {OpCode::CALL, "CALL"},
+    {OpCode::RETURN, "RETURN"},
+    {OpCode::END, "END"}
+};
+
+void Mutator::saveProgramToFile(const Program& program, const std::string& path)
 {
-    std::ofstream logFile(filePath);
+    std::ofstream file(path);
 
-    if (logFile.is_open()) {
+    if (file.is_open()) {
         for (auto line : program)
         {
-            const std::string opCode{ opCodeString.at(line.opCode) };
-            const MemType operand{ line.operand };
+            const std::string& opCode{ opCodeString.at(line.opCode) };
+            MemType operand{ line.operand };
 
-            logFile << opCode;
-            logFile << " ";
-            logFile << operand;
-            logFile << "\n";
+            file << opCode << " " << operand << "\n";
         }
     }
     else
     {
-        throw std::runtime_error("Unable to open file: " + filePath);
+        throw std::runtime_error("Unable to open file: " + path);
     }
 }
 
-void insert(const Code& code, Program& program)
+void Mutator::insert(const Code& code, Program& program)
 {
-    const MemType pos{ randomPosition(generate) };
+    MemType pos{ randomPosition(generate) };
     program.insert(program.begin() + pos, code);
 }
 
-void remove(Program& program)
+void Mutator::remove(Program& program)
 {
-    const MemType pos{ randomPosition(generate) };
+    MemType pos{ randomPosition(generate) };
     program.erase(program.begin() + pos);
 }
 
-void edit(MemType& operand)
+void Mutator::edit(MemType& operand)
 {
-    const MemType value{ randomOperand(generate) };
-    operand = value;
+    operand = randomOperand(generate);
 }
 
-void random(OpCode& opCode)
+void Mutator::random(OpCode& opCode)
 {
-    const OpCode value{ OpCodeList[randomOpCode(generate)] };
-    opCode = value;
+    opCode = OpCodeList[randomOpCode(generate)];
 }
 
-Program generateCode()
+Program& Mutator::generateCode()
 {
     Program randomCode;
 
@@ -69,7 +106,7 @@ Program generateCode()
         randomCode.push_back(instruction);
     }
 
-    logCode(randomCode);
+    saveProgramToFile(randomCode, "log.ai");
 
     return randomCode;
 }

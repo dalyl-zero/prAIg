@@ -1,15 +1,9 @@
 #include <iostream>
 
-//#include "VirtualMachine.h"
-//
-//using OpCode = VirtualMachine::OpCode;
-//using Code = VirtualMachine::Code;
-
 #include "Mutator.h"
 
-int main() {
-	VirtualMachine vm;
-
+int main()
+{
 //	std::vector<Code> minmax{
 //            {OpCode::JMP, 32},
 //
@@ -111,8 +105,14 @@ int main() {
 //            {OpCode::PRINT_CHAR},
 //            {OpCode::PRINT_CHAR},
 //	};
+//
+//	vm.executeProgram(minmax);
 
-    Program test{ generateCode() };
+	VirtualMachine vm;
+
+    Program test{ Mutator::generateCode() };
 
 	vm.executeProgram(test); // Lord, have mercy.
+
+	return 0;
 }
