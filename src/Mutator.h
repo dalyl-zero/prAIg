@@ -18,5 +18,5 @@ public:
     static void remove(Program& program);
     static void edit(MemType& operand);
     static void random(OpCode& opCode);
-    static Program& generateCode();
+    static Program generateCode();
 };

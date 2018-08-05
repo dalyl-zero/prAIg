@@ -96,7 +96,7 @@ void Mutator::random(OpCode& opCode)
     opCode = OpCodeList[randomOpCode(generate)];
 }
 
-Program& Mutator::generateCode()
+Program Mutator::generateCode()
 {
     Program randomCode;
 
