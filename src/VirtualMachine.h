@@ -24,11 +24,6 @@ namespace vm
         MUL,
         DIV,
 
-        ADD_VAL,
-        SUB_VAL,
-        MUL_VAL,
-        DIV_VAL,
-
         JMP,
         JIZ,
         JNZ,
