@@ -142,9 +142,19 @@ int main()
 	VirtualMachine vm;
 	vm.executeProgram(fibonacci);
 
-    //Program test{ Mutator::generateCode() };
+	while(true)
+	{
+		try
+		{
+			vm.executeProgram(Mutator::generateCode()); // Lord, have mercy.
+		}
+		catch(std::logic_error exception)
+		{
+			std::cout << exception.what() << std::endl;
+		}
 
-	//vm.executeProgram(test); // Lord, have mercy.
+		std::cout << "Next program" << std::endl;
+	}
 
 	return 0;
 }

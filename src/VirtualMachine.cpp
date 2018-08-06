@@ -63,7 +63,6 @@ void VirtualMachine::executeCode(const Code& code)
     const MemType& operand = code.operand;
     const RegisterIndex& registerIndex = code.registerIndex;
 
-
     if(opCode == OpCode::PUSH)
     {   
         if(registerIndex >= 0)
@@ -89,7 +88,14 @@ void VirtualMachine::executeCode(const Code& code)
     }
     else if(opCode == OpCode::POP)
     {
-        getRegister(registerIndex) = getStack();
+        if(registerIndex >= 0)
+        {
+            getRegister(registerIndex) = getStack();
+        }
+        else
+        {
+            getStack();
+        }
     }
     else if(opCode == OpCode::DUP)
     {
@@ -251,10 +257,17 @@ void VirtualMachine::executeProgram()
     registers = {0};
     callstack.clear();
 
+    int instructionCount = 0;
+
     while (currentAddress < static_cast<MemType>(program.size())) 
     {
         executeCode(program[currentAddress]);
         currentAddress++;
+
+        if(instructionCount++ > 1000)
+        {
+            throw std::logic_error("Infinite execution");
+        }
     }
 }
 
