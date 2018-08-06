@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <array>
+#include <sstream>
 
 namespace vm
 {
@@ -64,15 +65,21 @@ public:
     void executeProgram();
     void executeProgram(const Program& program);
 
+    void setInput(const std::string& input);
+    std::string getOutput() const;
+
 private:
     void executeCode(const Code& code);
-    void executeCode(OpCode opCode, MemType operand = 0, int registerIndex = -1);
+    void executeCode(OpCode opCode, MemType operand = 0, RegisterIndex registerIndex = -1);
 
-    MemType& getRegister(const int index);
+    MemType& getRegister(const RegisterIndex index);
 
     MemType popStack();
     MemType& getStack();
     MemType& pushStack(MemType value);
+
+    std::istringstream input;
+    std::ostringstream output;
 
     std::vector<MemType> stack;
     std::vector<MemType> callstack;

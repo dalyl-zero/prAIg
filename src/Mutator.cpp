@@ -68,7 +68,7 @@ Program Mutator::generateCode()
         randomCode.push_back(instruction);
     }
 
-    saveProgramToFile(randomCode, "log.ai");
+    //saveProgramToFile(randomCode, "log.ai");
 
     return randomCode;
 }

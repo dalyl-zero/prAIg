@@ -141,8 +141,9 @@ int main()
 
 	VirtualMachine vm;
 	vm.executeProgram(fibonacci);
-
-	while(true)
+	std::cout << vm.getOutput() << std::endl;
+	
+	for(int x = 0; x < 10000; x++)
 	{
 		try
 		{
@@ -153,7 +154,7 @@ int main()
 			std::cout << exception.what() << std::endl;
 		}
 
-		std::cout << "Next program" << std::endl;
+		std::cout << "Next program" << std::endl << std::endl;
 	}
 
 	return 0;

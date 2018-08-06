@@ -13,6 +13,16 @@ void VirtualMachine::setProgram(const Program& program)
     this->program = program;
 }
 
+void VirtualMachine::setInput(const std::string& input)
+{
+    this->input = std::istringstream{input};
+}
+
+std::string VirtualMachine::getOutput() const
+{
+    return output.str();
+}
+
 MemType VirtualMachine::popStack()
 {
     if (stack.empty())
@@ -42,7 +52,7 @@ MemType& VirtualMachine::pushStack(MemType value)
     return stack.back();
 }
 
-MemType& VirtualMachine::getRegister(const int index)
+MemType& VirtualMachine::getRegister(const RegisterIndex index)
 {
     if (index < 0 || index >= REGISTER_COUNT)
     {
@@ -52,7 +62,7 @@ MemType& VirtualMachine::getRegister(const int index)
     return registers[index];
 }
 
-void VirtualMachine::executeCode(OpCode opCode, MemType operand, int registerIndex)
+void VirtualMachine::executeCode(OpCode opCode, MemType operand, RegisterIndex registerIndex)
 {
     executeCode({opCode, operand, registerIndex});
 }
@@ -167,18 +177,23 @@ void VirtualMachine::executeCode(const Code& code)
     }
     else if(opCode == OpCode::PRINT)
     {
-        const MemType& output = (registerIndex < 0 ? popStack() : getRegister(registerIndex));
-        std::cout << output << std::endl;
+        const MemType& value = (registerIndex < 0 ? popStack() : getRegister(registerIndex));
+        output << value << std::endl;
     }
     else if(opCode == OpCode::PRINT_CHAR)
     {
-        const MemType& output = (registerIndex < 0 ? popStack() : getRegister(registerIndex));
-        std::cout << static_cast<char>(output) << std::endl;
+        const MemType& value = (registerIndex < 0 ? popStack() : getRegister(registerIndex));
+        output << static_cast<char>(value) << std::endl;
     }
     else if(opCode == OpCode::INPUT)
     {
-        MemType& input = (registerIndex < 0 ? pushStack(0) : getRegister(registerIndex));
-        std::cin >> input;
+        if(input.str().empty())
+        {
+            throw std::logic_error("Empty Input");
+        }
+
+        MemType& value = (registerIndex < 0 ? pushStack(0) : getRegister(registerIndex));
+        input >> value;
     }
     else if(opCode == OpCode::JMP)
     {
@@ -256,6 +271,8 @@ void VirtualMachine::executeProgram()
     currentAddress = 0;
     registers = {0};
     callstack.clear();
+
+    std::ostringstream output = std::ostringstream{};
 
     int instructionCount = 0;
 
