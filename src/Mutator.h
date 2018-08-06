@@ -9,8 +9,6 @@
 class Mutator
 {
 public:
-    static const std::vector<OpCode> OpCodeList;
-    static const std::map<OpCode, std::string> opCodeString;
     static constexpr int codeSize{ 128 };
 
     static void saveProgramToFile(const Program& program, const std::string& path);
@@ -18,5 +16,8 @@ public:
     static void remove(Program& program);
     static void edit(MemType& operand);
     static void random(OpCode& opCode);
+
+    static OpCode getRandomOpCode();
+
     static Program generateCode();
 };

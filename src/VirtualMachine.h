@@ -1,13 +1,15 @@
 #pragma once
 
+#include "Smartenum.hpp"
+
 #include <vector>
 #include <array>
 
 namespace vm
 {
     using MemType = int;
-    enum class OpCode
-    {
+    smart_enum_class(OpCode,
+
         PUSH,
         PUSH_VAL,
         POP,
@@ -41,7 +43,9 @@ namespace vm
         RETURN,
 
         END,
-    };
+
+        OPCODE_COUNT // Must always be last
+    );
 
     using RegisterIndex = char;
     static constexpr RegisterIndex REGISTER_COUNT = 8;
@@ -50,7 +54,7 @@ namespace vm
     {
         OpCode opCode;
         MemType operand = 0;
-        RegisterIndex registerIndex;
+        RegisterIndex registerIndex = -1;
     };
 
 
