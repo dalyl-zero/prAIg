@@ -14,10 +14,11 @@ public:
     static void saveProgramToFile(const Program& program, const std::string& path);
     static void insert(const Code& code, Program& program);
     static void remove(Program& program);
-    static void edit(MemType& operand);
+    static void edit(Code& code);
     static void random(OpCode& opCode);
 
     static OpCode getRandomOpCode();
 
     static Program generateCode();
+    static void mutate(Program& program);
 };

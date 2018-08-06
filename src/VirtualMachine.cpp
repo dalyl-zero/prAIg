@@ -15,7 +15,7 @@ void VirtualMachine::setProgram(const Program& program)
 
 void VirtualMachine::setInput(const std::string& input)
 {
-    this->input = std::istringstream{input};
+    this->input.str(input);
 }
 
 std::string VirtualMachine::getOutput() const
@@ -178,12 +178,12 @@ void VirtualMachine::executeCode(const Code& code)
     else if(opCode == OpCode::PRINT)
     {
         const MemType& value = (registerIndex < 0 ? popStack() : getRegister(registerIndex));
-        output << value << std::endl;
+        output << value;// << std::endl;
     }
     else if(opCode == OpCode::PRINT_CHAR)
     {
         const MemType& value = (registerIndex < 0 ? popStack() : getRegister(registerIndex));
-        output << static_cast<char>(value) << std::endl;
+        output << static_cast<char>(value);// << std::endl;
     }
     else if(opCode == OpCode::INPUT)
     {
@@ -272,7 +272,7 @@ void VirtualMachine::executeProgram()
     registers = {0};
     callstack.clear();
 
-    std::ostringstream output = std::ostringstream{};
+    output.str("");
 
     int instructionCount = 0;
 
