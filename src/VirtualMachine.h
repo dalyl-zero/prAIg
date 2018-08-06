@@ -11,7 +11,6 @@ namespace vm
     smart_enum_class(OpCode,
 
         PUSH,
-        PUSH_VAL,
         POP,
         GET,
         DUP,
@@ -67,7 +66,7 @@ public:
 
 private:
     void executeCode(const Code& code);
-    void executeCode(OpCode opCode, MemType operand = 0);
+    void executeCode(OpCode opCode, MemType operand = 0, int registerIndex = -1);
 
     MemType& getRegister(const int index);
 

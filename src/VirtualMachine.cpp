@@ -52,9 +52,9 @@ MemType& VirtualMachine::getRegister(const int index)
     return registers[index];
 }
 
-void VirtualMachine::executeCode(OpCode opCode, MemType operand)
+void VirtualMachine::executeCode(OpCode opCode, MemType operand, int registerIndex)
 {
-    executeCode({opCode, operand});
+    executeCode({opCode, operand, registerIndex});
 }
 
 void VirtualMachine::executeCode(const Code& code)
@@ -66,15 +66,19 @@ void VirtualMachine::executeCode(const Code& code)
 
     if(opCode == OpCode::PUSH)
     {   
-        stack.push_back(getRegister(registerIndex));
-    }
-    else if(opCode == OpCode::PUSH_VAL)
-    {   
-        stack.push_back(operand);
+        if(registerIndex >= 0)
+        {
+            stack.push_back(getRegister(registerIndex));
+        }
+        else
+        {
+            stack.push_back(operand);
+        }
+        
     }
     else if(opCode == OpCode::POP)
     {
-        if(operand >= 0)
+        if(registerIndex >= 0)
         {
             getRegister(registerIndex) = popStack();
         }

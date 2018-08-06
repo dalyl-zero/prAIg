@@ -108,11 +108,43 @@ int main()
 //
 //	vm.executeProgram(minmax);
 
+	std::vector<Code> fibonacci
+	{
+		{OpCode::PUSH, 0},
+		{OpCode::PUSH, 1},
+
+		{OpCode::PUSH, 45},
+		{OpCode::POP, 0, 2},
+
+		{OpCode::POP, 0, 0},
+		{OpCode::POP, 0, 1},
+
+		{OpCode::PUSH, 0},
+
+		{OpCode::ADD, 0, 0},
+		{OpCode::ADD, 0, 1},
+
+		{OpCode::DUP, 0},
+		{OpCode::PRINT, 0},
+
+		{OpCode::SWAP, 0, 0},
+		{OpCode::POP, 0, 1},
+
+		{OpCode::PUSH, 0, 1},
+		{OpCode::PUSH, 0, 0},
+
+		{OpCode::PUSH, 0, 2},
+		{OpCode::SUB, 1},
+
+		{OpCode::JIP, -14}
+	};
+
 	VirtualMachine vm;
+	vm.executeProgram(fibonacci);
 
-    Program test{ Mutator::generateCode() };
+    //Program test{ Mutator::generateCode() };
 
-	vm.executeProgram(test); // Lord, have mercy.
+	//vm.executeProgram(test); // Lord, have mercy.
 
 	return 0;
 }
