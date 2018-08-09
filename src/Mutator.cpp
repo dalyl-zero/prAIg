@@ -13,12 +13,50 @@ std::uniform_int_distribution<int> randomPosition(0, Mutator::codeSize - 1);
 std::uniform_int_distribution<int> randomOpCode(0, static_cast<int>(OpCode::OPCODE_COUNT) - 1);
 std::uniform_int_distribution<int> randomOperand(0, Mutator::codeSize);
 std::uniform_int_distribution<int> randomRegister(0, 2);
-
 std::uniform_int_distribution<int> randomMutate(0, 6);
+
+const std::vector<Mutator::OpCodeWeight> Mutator::weights = {
+    {OpCode::PUSH, 15},
+    {OpCode::POP, 10},
+    {OpCode::GET, 5},
+    {OpCode::DUP, 5},
+    {OpCode::SWAP, 1},
+
+    {OpCode::SET_REG, 1},
+
+    {OpCode::ADD, 5},
+    {OpCode::SUB, 5},
+    {OpCode::MUL, 5},
+    {OpCode::DIV, 5},
+
+    {OpCode::JMP, 4},
+    {OpCode::JIZ, 4},
+    {OpCode::JNZ, 4},
+    {OpCode::JIP, 4},
+    {OpCode::JIN, 4},
+
+    {OpCode::PRINT, 10},
+    {OpCode::PRINT_CHAR, 5},
+    {OpCode::INPUT, 1},
+
+    {OpCode::CALL, 1},
+    {OpCode::RETURN, 1},
+
+    {OpCode::END, 5},
+
+    {OpCode::OPCODE_COUNT, 0}
+};
 
 OpCode Mutator::getRandomOpCode()
 {
-    return static_cast<OpCode>(randomOpCode(generate));
+    std::uniform_int_distribution<int> randomWeight(0, Mutator::totalWeight);
+    int weight{ randomWeight(generate) };
+    for (auto opCodeWeight : weights)
+    {
+        weight -= opCodeWeight.weight;
+        if (weight <= 0)
+            return opCodeWeight.opCode;
+    }
 }
 
 void Mutator::saveProgramToFile(const Program& program, const std::string& path)
@@ -99,8 +137,6 @@ Program Mutator::generateCode()
         Code instruction{ getRandomOpCode(), randomOperand(generate), randomRegister(generate)};
         randomCode.push_back(instruction);
     }
-
-    saveProgramToFile(randomCode, "log.ai");
 
     return randomCode;
 }
