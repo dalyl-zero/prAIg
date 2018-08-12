@@ -5,59 +5,87 @@
 #include "Mutator.h"
 
 #include <fstream>
-#include <random>
 
-std::random_device device;
-std::default_random_engine generate(device());
-std::uniform_int_distribution<int> randomPosition(0, Mutator::codeSize - 1);
-std::uniform_int_distribution<int> randomOpCode(0, static_cast<int>(OpCode::OPCODE_COUNT) - 1);
-std::uniform_int_distribution<int> randomOperand(0, Mutator::codeSize);
-std::uniform_int_distribution<int> randomRegister(0, 2);
-std::uniform_int_distribution<int> randomMutate(0, 6);
+Mutator::Mutator(): randEngine(std::random_device{}())
+{
+    randomMutate = std::uniform_int_distribution<int>{0, 700};
+    randomOperand = std::uniform_int_distribution<int>{10, 122};
+    randomRegister = std::uniform_int_distribution<int>{-1, -1};
 
-const std::vector<Mutator::OpCodeWeight> Mutator::weights = {
-    {OpCode::PUSH, 15},
-    {OpCode::POP, 10},
-    {OpCode::GET, 5},
-    {OpCode::DUP, 5},
-    {OpCode::SWAP, 1},
+    setOpCodeWeights(
+    {
+        {OpCode::PUSH, 100},
+        {OpCode::PRINT_CHAR, 100},
+    });
 
-    {OpCode::SET_REG, 1},
+    setCodeMutationWeights(
+    {
+        {INCREMENT_OPERAND, 30},
+        {DECREMENT_OPERAND, 30},
+        {INCREMENT_REGISTER, 0},
+        {DECREMENT_REGISTER, 0},
+        {NEW_OPCODE, 2},
+        {NEW_OPERAND, 2},
+        {NEW_REGISTER, 0}
+    });
+}
 
-    {OpCode::ADD, 5},
-    {OpCode::SUB, 5},
-    {OpCode::MUL, 5},
-    {OpCode::DIV, 5},
+void Mutator::setOpCodeWeights(const OpCodeWeights& weights)
+{
+    opCodeWeights = weights;
 
-    {OpCode::JMP, 4},
-    {OpCode::JIZ, 4},
-    {OpCode::JNZ, 4},
-    {OpCode::JIP, 4},
-    {OpCode::JIN, 4},
+    totalOpCodeWeights = 0;
+    for(const OpCodeWeight& weight : opCodeWeights)
+    {
+        totalOpCodeWeights += weight.weight;
+    }
+}
 
-    {OpCode::PRINT, 10},
-    {OpCode::PRINT_CHAR, 5},
-    {OpCode::INPUT, 1},
+void Mutator::setCodeMutationWeights(const CodeMutationWeights& weights)
+{
+    codeMutationWeights = weights;
 
-    {OpCode::CALL, 1},
-    {OpCode::RETURN, 1},
-
-    {OpCode::END, 5},
-
-    {OpCode::OPCODE_COUNT, 0}
-};
+    totalCodeMutationWeights = 0;
+    for(const CodeMutationWeight& weight : codeMutationWeights)
+    {
+        totalCodeMutationWeights += weight.weight;
+    }
+}
 
 OpCode Mutator::getRandomOpCode()
 {
-    std::uniform_int_distribution<int> randomWeight(0, Mutator::totalWeight);
-    int weight{ randomWeight(generate) };
-    for (auto opCodeWeight : weights)
+    std::uniform_int_distribution<int> randomWeight(0, totalOpCodeWeights);
+
+    int selected = randomWeight(randEngine);
+    for (const OpCodeWeight& opCodeWeight : opCodeWeights)
     {
-        weight -= opCodeWeight.weight;
-        if (weight <= 0)
+        selected -= opCodeWeight.weight;
+        if (selected <= 0)
+        {
             return opCodeWeight.opCode;
+        }
     }
+
+    return {};
 }
+
+Mutator::CodeMutation Mutator::getRandomCodeMutation()
+{
+    std::uniform_int_distribution<int> randomWeight(0, totalCodeMutationWeights);
+
+    int selected = randomWeight(randEngine);
+    for (const CodeMutationWeight& codeMutationWeight : codeMutationWeights)
+    {
+        selected -= codeMutationWeight.weight;
+        if (selected <= 0)
+        {
+            return codeMutationWeight.mutation;
+        }
+    }
+
+    return {};
+}
+
 
 void Mutator::saveProgramToFile(const Program& program, const std::string& path)
 {
@@ -79,47 +107,46 @@ void Mutator::saveProgramToFile(const Program& program, const std::string& path)
 void Mutator::insert(const Code& code, Program& program)
 {
     std::uniform_int_distribution<int> randomPosition(0, program.size() - 1);
-    MemType pos{ randomPosition(generate) };
+    MemType pos{ randomPosition(randEngine) };
     program.insert(program.begin() + pos, code);
 }
 
 void Mutator::remove(Program& program)
 {
     std::uniform_int_distribution<int> randomPosition(0, program.size() - 1);
-    MemType pos{ randomPosition(generate) };
+    MemType pos{ randomPosition(randEngine) };
     program.erase(program.begin() + pos);
 }
 
-void Mutator::edit(Code& code)
+void Mutator::mutate(Code& code, CodeMutation mutation)
 {
-    int mutateValue = randomMutate(generate);
-    if(mutateValue == 0)
+    if(mutation == INCREMENT_OPERAND)
     {
         code.operand++;
     }
-    else if(mutateValue == 1)
+    else if(mutation == DECREMENT_OPERAND)
     {
         code.operand--;
     }
-    else if(mutateValue == 2)
+    else if(mutation == INCREMENT_REGISTER)
     {
         code.registerIndex++;
     }
-    else if(mutateValue == 3)
+    else if(mutation == DECREMENT_REGISTER)
     {
         code.registerIndex--;
     }
-    else if(mutateValue == 4)
+    else if(mutation == NEW_OPCODE)
     {
         code.opCode = getRandomOpCode();
     }
-    else if(mutateValue == 5)
+    else if(mutation == NEW_OPERAND)
     {
-        code.operand = randomOperand(generate);
+        code.operand = randomOperand(randEngine);
     }
-    else if(mutateValue == 6)
+    else if(mutation == NEW_REGISTER)
     {
-        code.registerIndex = randomRegister(generate);
+        code.registerIndex = randomRegister(randEngine);
     }
 }
 
@@ -128,37 +155,37 @@ void Mutator::random(OpCode& opCode)
     opCode = getRandomOpCode();
 }
 
-Program Mutator::generateCode()
+Program Mutator::generateProgram(int programSize)
 {
-    Program randomCode;
+    Program program;
 
-    for (int i{0}; i < codeSize; i++)
+    for (int i{0}; i < programSize; i++)
     {
-        Code instruction{ getRandomOpCode(), randomOperand(generate), randomRegister(generate)};
-        randomCode.push_back(instruction);
+        Code instruction{ getRandomOpCode(), randomOperand(randEngine), randomRegister(randEngine)};
+        program.push_back(instruction);
     }
 
-    return randomCode;
+    return program;
 }
 
 void Mutator::mutate(Program& program)
 {
     for(Code& code: program)
     {
-        if(randomMutate(generate))
+        if(randomMutate(randEngine) <= 10)
         {
-            edit(code);
+            mutate(code, getRandomCodeMutation());
         }
     }
 
-    if(randomMutate(generate) == 0)
+    if(randomMutate(randEngine) == 0)
     {
         remove(program);
     }
 
-    if(randomMutate(generate) == 0)
+    if(randomMutate(randEngine) == 0)
     {
-        Code instruction{getRandomOpCode(), randomOperand(generate), randomRegister(generate)};
+        Code instruction{getRandomOpCode(), randomOperand(randEngine), randomRegister(randEngine)};
         insert(instruction, program);
     }
 }

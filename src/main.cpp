@@ -6,92 +6,65 @@
 int main()
 {
 	VirtualMachine vm;
+	Mutator mutator;
 
 	std::vector<std::pair<Program, int>> bestPrograms;
 
 	auto getScore = [](const std::string& output)
 	{
 		//const std::string target = "Hello World!";
-		const std::string target = "dumb";
+		const std::string target = "LlzGRnCDajkw6oNjgL7hsS3ncuFjeZ121lvHvI9DJDZlUBQ3hxF47MHER0vjgHUJrSpePzr6bNkOSjZZ4KmgUrpLFcKxInKBDFaUacKA14c6AZOfHf9UcK6UKr6uexMq";
+		//const std::string target = "dumb";
 
 		int score = 0;
 
-		for(int x = 0; x < target.size() && x < output.size(); x++)
+		for(size_t x = 0; x < target.size() && x < output.size(); x++)
 		{
 			score -= std::abs(target[x] - output[x]);
 		}
 
-		score -= std::abs((int)(target.size() - output.size())) * 255;
+		score -= std::abs((int)(target.size()) - (int)(output.size())) * 255;
 
 		return score;
 	};
 
-	for(int x = 0; x < 1000; x++)
+	for(int x = 0; x < 10000; x++)
 	{
-		Program randomProgram = Mutator::generateCode();
-		try
-		{
-			vm.executeProgram(randomProgram); // Lord, have mercy.
-		}
-		catch(std::logic_error exception)
-		{
-			//std::cout << exception.what() << std::endl;
-		}
-
-		if(vm.getOutput().size())
-		{
-			//std::cout << "Output: " << vm.getOutput() << std::endl;
-		}
+		Program randomProgram = mutator.generateProgram(800);
+		vm.executeProgramSafe(randomProgram); // Lord, have mercy.
 
 		bestPrograms.push_back({randomProgram, getScore(vm.getOutput())});
-
-		//std::cout << "Next program" << std::endl << std::endl;
 	}
 
-	for(int x = 0; x< 10000; x++)
+	for(int x = 0; x < 100000; x++)
 	{
-		std::sort(bestPrograms.begin(), bestPrograms.end(), [](auto& p1, auto& p2)
+		std::sort(bestPrograms.begin(), bestPrograms.end(), [](const auto& p1, const auto& p2)
 		{
 			return p1.second > p2.second;
 		});
+		
+		if(x % 100 == 0)
+		{
+			vm.executeProgramSafe(bestPrograms[0].first);
+			std::cout << "Best Output: " << bestPrograms[0].second << " | " << vm.getOutput() << std::endl;
 
-		bestPrograms.resize(std::min(bestPrograms.size(), (size_t)500));
+			if(bestPrograms[0].second == 0)
+			{
+				break;
+			}
+		}
+
+		bestPrograms.resize(std::min(bestPrograms.size(), (size_t)10));
 
 		std::vector<std::pair<Program, int>> newPrograms = bestPrograms;
 		for(auto& pair : newPrograms)
 		{
-			Mutator::mutate(pair.first);
-		}
-
-		bestPrograms.insert(bestPrograms.end(), newPrograms.begin(), newPrograms.end());
-
-		for(auto& pair : bestPrograms)
-		{
-			try
-			{
-				vm.executeProgram(pair.first);
-			}
-			catch(std::logic_error exception)
-			{
-				//std::cout << exception.what() << std::endl;
-			}
-
-			if(vm.getOutput().size())
-			{
-				//std::cout << "Output: " << vm.getOutput() << std::endl;
-			}
-
+			mutator.mutate(pair.first);
+			vm.executeProgramSafe(pair.first);
 			pair.second = getScore(vm.getOutput());
 		}
 
-		try
-		{
-			vm.executeProgram(bestPrograms[0].first);
-		}
-		catch(std::logic_error exception)
-		{
-		}
-		std::cout << "Best Output: " << vm.getOutput() << std::endl;
+		bestPrograms.insert(bestPrograms.end(), newPrograms.begin(), newPrograms.end());
 	}
 
 	return 0;

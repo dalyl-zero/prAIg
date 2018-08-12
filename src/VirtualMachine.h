@@ -64,6 +64,7 @@ public:
     void setProgram(const Program& program);
     void executeProgram();
     void executeProgram(const Program& program);
+    void executeProgramSafe(const Program& program);
 
     void setInput(const std::string& input);
     std::string getOutput() const;

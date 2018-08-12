@@ -2,29 +2,64 @@
 
 #include <string>
 #include <vector>
+#include <random>
 
 #include "VirtualMachine.h"
 
 class Mutator
 {
 public:
+	Mutator();
+
     struct OpCodeWeight
     {
         OpCode opCode;
         int weight;
     };
-    static constexpr int codeSize{ 128 };
-    static constexpr int totalWeight{ 100 };
-    static const std::vector<Mutator::OpCodeWeight> weights;
+    using OpCodeWeights = std::vector<OpCodeWeight>;
 
-    static void saveProgramToFile(const Program& program, const std::string& path);
-    static void insert(const Code& code, Program& program);
-    static void remove(Program& program);
-    static void edit(Code& code);
-    static void random(OpCode& opCode);
+    int totalOpCodeWeights = 0;
+    OpCodeWeights opCodeWeights = {};
+    void setOpCodeWeights(const OpCodeWeights& weights);
 
-    static OpCode getRandomOpCode();
+    enum CodeMutation
+    {
+    	INCREMENT_OPERAND,
+    	DECREMENT_OPERAND,
+    	INCREMENT_REGISTER,
+    	DECREMENT_REGISTER,
+    	NEW_OPCODE,
+    	NEW_OPERAND,
+    	NEW_REGISTER
+    };
 
-    static Program generateCode();
-    static void mutate(Program& program);
+    struct CodeMutationWeight
+    {
+        CodeMutation mutation;
+        int weight;
+    };
+    using CodeMutationWeights = std::vector<CodeMutationWeight>;
+
+    int totalCodeMutationWeights = 0;
+    CodeMutationWeights codeMutationWeights = {};
+    void setCodeMutationWeights(const CodeMutationWeights& weights);
+
+    void saveProgramToFile(const Program& program, const std::string& path);
+    void insert(const Code& code, Program& program);
+    void remove(Program& program);
+    void random(OpCode& opCode);
+
+    OpCode getRandomOpCode();
+    CodeMutation getRandomCodeMutation();
+
+    Program generateProgram(int programSize = 100);
+
+
+    void mutate(Code& code, CodeMutation mutation);
+    void mutate(Program& program);
+
+	std::default_random_engine randEngine;
+	std::uniform_int_distribution<int> randomOperand;
+	std::uniform_int_distribution<int> randomRegister;
+	std::uniform_int_distribution<int> randomMutate;
 };

@@ -270,6 +270,7 @@ void VirtualMachine::executeProgram()
 {
     currentAddress = 0;
     registers = {0};
+    stack.clear();
     callstack.clear();
 
     output.str("");
@@ -281,7 +282,7 @@ void VirtualMachine::executeProgram()
         executeCode(program[currentAddress]);
         currentAddress++;
 
-        if(instructionCount++ > 1000)
+        if(instructionCount++ > 2000)
         {
             throw std::logic_error("Infinite execution");
         }
@@ -292,4 +293,17 @@ void VirtualMachine::executeProgram(const Program& program)
 {
     setProgram(program);
     executeProgram();
+}
+
+void VirtualMachine::executeProgramSafe(const Program& program) 
+{
+    setProgram(program);
+
+    try
+    {
+        executeProgram();
+    }
+    catch(...)
+    {
+    }
 }
