@@ -1,15 +1,19 @@
 //
-// Created by Dalyl on 07/08/2018.
+// Created by Dalyl on 17/09/2018.
 //
 
 #pragma once
 
-#include <map>
-
 #include "VirtualMachine.h"
+#include "Mutator.h"
 
 class GeneticTrainer
 {
 public:
+    void train();
 
+private:
+    int score(const std::string& output);
+    VirtualMachine vm;
+    Mutator mutator;
 };
