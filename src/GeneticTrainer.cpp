@@ -5,7 +5,7 @@
 #include "GeneticTrainer.h"
 
 #include <algorithm>
-GeneticTrainer::GeneticTrainer(int programs, int best, int iterations) : num_programs{programs}, best_cnt{best}, iteration_cnt{iterations}
+GeneticTrainer::GeneticTrainer(int programs, int best, int iterations) : numPrograms{programs}, bestCnt{best}, iterationCnt{iterations}
 {}
 
 int GeneticTrainer::score(const std::string &output)
@@ -28,7 +28,7 @@ void GeneticTrainer::train()
 {
     std::vector<std::pair<Program, int>> bestPrograms;
 
-    for(int x = 0; x < num_programs; x++)
+    for(int x = 0; x < numPrograms; x++)
     {
         Program randomProgram = mutator.generateProgram(800);
         vm.executeProgramSafe(randomProgram); // Lord, have mercy.
@@ -36,14 +36,14 @@ void GeneticTrainer::train()
         bestPrograms.emplace_back(std::make_pair(randomProgram, score(vm.getOutput())));
     }
 
-    for(int x = 0; x < iteration_cnt; x++)
+    for(int x = 0; x < iterationCnt; x++)
     {
         std::sort(bestPrograms.begin(), bestPrograms.end(), [](const auto& p1, const auto& p2)
         {
             return p1.second > p2.second;
         });
 
-        if(x % best_cnt == 0)
+        if(x % bestCnt == 0)
         {
             vm.executeProgramSafe(bestPrograms[0].first);
             std::cout << "Best Output: " << bestPrograms[0].second << " | " << vm.getOutput() << std::endl;

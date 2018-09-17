@@ -15,9 +15,9 @@ public:
 
 private:
     int score(const std::string& output);
-    int num_programs;
-    int best_cnt;
-    int iteration_cnt;
+    int numPrograms;
+    int bestCnt;
+    int iterationCnt;
     VirtualMachine vm;
     Mutator mutator;
 };
