@@ -4,7 +4,7 @@
 
 int main()
 {
-    GeneticTrainer geneticTrainer;
+    GeneticTrainer geneticTrainer(1000, 100, 10000);
     geneticTrainer.train();
 
 	return 0;
