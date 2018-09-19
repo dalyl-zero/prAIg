@@ -4,20 +4,29 @@
 
 #pragma once
 
+#include <functional>
+
 #include "VirtualMachine.h"
 #include "Mutator.h"
+
+struct TrainerPolicy
+{
+	std::function<int(const std::string& output)> getScore;
+};
 
 class GeneticTrainer
 {
 public:
-    GeneticTrainer(int programs, int best, int iterations);
+    GeneticTrainer(const TrainerPolicy& policy, int programs, int best, int iterations);
     void train();
 
 private:
-    int score(const std::string& output);
+	TrainerPolicy policy;
+
     int numPrograms;
     int bestCnt;
     int iterationCnt;
+
     VirtualMachine vm;
     Mutator mutator;
 };

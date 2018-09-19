@@ -5,24 +5,8 @@
 #include "GeneticTrainer.h"
 
 #include <algorithm>
-GeneticTrainer::GeneticTrainer(int programs, int best, int iterations) : numPrograms{programs}, bestCnt{best}, iterationCnt{iterations}
+GeneticTrainer::GeneticTrainer(const TrainerPolicy& policy, int programs, int best, int iterations) : policy{policy}, numPrograms{programs}, bestCnt{best}, iterationCnt{iterations}
 {}
-
-int GeneticTrainer::score(const std::string &output)
-{
-    const std::string target = "LlzGRnCDajkw6oNjgL7hsS3ncuFjeZ121lvHvI9DJDZlUBQ3hxF47MHER0vjgHUJrSpePzr6bNkOSjZZ4KmgUrpLFcKxInKBDFaUacKA14c6AZOfHf9UcK6UKr6uexMq";
-
-    int score {0};
-
-    for(size_t x {0}; x < target.size() && x < output.size(); x++)
-    {
-        score -= std::abs(target[x] - output[x]);
-    }
-
-    score -= std::abs((int)(target.size()) - (int)(output.size())) * 255;
-
-    return score;
-}
 
 void GeneticTrainer::train()
 {
@@ -33,7 +17,7 @@ void GeneticTrainer::train()
         Program randomProgram = mutator.generateProgram(800);
         vm.executeProgramSafe(randomProgram); // Lord, have mercy.
 
-        bestPrograms.emplace_back(std::make_pair(randomProgram, score(vm.getOutput())));
+        bestPrograms.emplace_back(std::make_pair(randomProgram, policy.getScore(vm.getOutput())));
     }
 
     for(int x = 0; x < iterationCnt; x++)
@@ -61,7 +45,7 @@ void GeneticTrainer::train()
         {
             mutator.mutate(pair.first);
             vm.executeProgramSafe(pair.first);
-            pair.second = score(vm.getOutput());
+            pair.second = policy.getScore(vm.getOutput());
         }
 
         bestPrograms.insert(bestPrograms.end(), newPrograms.begin(), newPrograms.end());
