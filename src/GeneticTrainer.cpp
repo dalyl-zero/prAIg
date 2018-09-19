@@ -5,8 +5,6 @@
 #include "GeneticTrainer.h"
 
 #include <algorithm>
-GeneticTrainer::GeneticTrainer(const TrainerPolicy& policy, int programs, int best, int iterations) : policy{policy}, numPrograms{programs}, bestCnt{best}, iterationCnt{iterations}
-{}
 
 void GeneticTrainer::train()
 {
@@ -14,7 +12,7 @@ void GeneticTrainer::train()
 
     std::vector<std::pair<Program, int>> bestPrograms;
 
-    for(int x = 0; x < numPrograms; x++)
+    for(int x = 0; x < initialProgramCount; x++)
     {
         Program randomProgram = mutator.generateProgram(800);
         vm.executeProgramSafe(randomProgram); // Lord, have mercy.
@@ -22,14 +20,14 @@ void GeneticTrainer::train()
         bestPrograms.emplace_back(std::make_pair(randomProgram, policy.getScore(vm.getOutput())));
     }
 
-    for(int x = 0; x < iterationCnt; x++)
+    for(int x = 0; x < maxIterationCount; x++)
     {
         std::sort(bestPrograms.begin(), bestPrograms.end(), [](const auto& p1, const auto& p2)
         {
             return p1.second > p2.second;
         });
 
-        if(x % bestCnt == 0)
+        if(x % 100 == 0)
         {
             vm.executeProgramSafe(bestPrograms[0].first);
             std::cout << "Best Output: " << bestPrograms[0].second << " | " << vm.getOutput() << std::endl;
@@ -40,7 +38,7 @@ void GeneticTrainer::train()
             }
         }
 
-        bestPrograms.resize(std::min(bestPrograms.size(), (size_t)10));
+        bestPrograms.resize(std::min(bestPrograms.size(), static_cast<size_t>(populationCount)));
 
         std::vector<std::pair<Program, int>> newPrograms = bestPrograms;
         for(auto& pair : newPrograms)

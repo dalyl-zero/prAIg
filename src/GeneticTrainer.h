@@ -18,16 +18,15 @@ struct TrainerPolicy
 class GeneticTrainer
 {
 public:
-    GeneticTrainer(const TrainerPolicy& policy, int programs, int best, int iterations);
     void train();
 
-private:
 	TrainerPolicy policy;
 
-    int numPrograms;
-    int bestCnt;
-    int iterationCnt;
+    int initialProgramCount;
+    int populationCount;
+    int maxIterationCount;
 
+private:
     VirtualMachine vm;
     Mutator mutator;
 };

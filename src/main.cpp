@@ -47,7 +47,11 @@ int main()
 		}
 	};
 
-    GeneticTrainer geneticTrainer(policy, 1000, 100, 10000);
+    GeneticTrainer geneticTrainer;
+    geneticTrainer.policy = policy;
+    geneticTrainer.initialProgramCount = 1000;
+    geneticTrainer.populationCount = 10;
+    geneticTrainer.maxIterationCount = 10000;
     geneticTrainer.train();
 
 	return 0;
