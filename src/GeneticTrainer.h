@@ -11,6 +11,7 @@
 
 struct TrainerPolicy
 {
+	std::function<void(Mutator& mutator)> initMutator;
 	std::function<int(const std::string& output)> getScore;
 };
 

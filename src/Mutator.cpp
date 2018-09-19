@@ -8,25 +8,16 @@
 
 Mutator::Mutator(): randEngine(std::random_device{}())
 {
-    randomMutate = std::uniform_int_distribution<int>{0, 700};
-    randomOperand = std::uniform_int_distribution<int>{10, 122};
-    randomRegister = std::uniform_int_distribution<int>{-1, -1};
+    randomMutate = std::uniform_int_distribution<int>{0,0};
+    randomOperand = std::uniform_int_distribution<int>{0,0};
+    randomRegister = std::uniform_int_distribution<int>{0,0};
 
     setOpCodeWeights(
     {
-        {OpCode::PUSH, 100},
-        {OpCode::PRINT_CHAR, 100},
     });
 
     setCodeMutationWeights(
     {
-        {INCREMENT_OPERAND, 30},
-        {DECREMENT_OPERAND, 30},
-        {INCREMENT_REGISTER, 0},
-        {DECREMENT_REGISTER, 0},
-        {NEW_OPCODE, 2},
-        {NEW_OPERAND, 2},
-        {NEW_REGISTER, 0}
     });
 }
 

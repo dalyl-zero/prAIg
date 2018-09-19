@@ -10,6 +10,8 @@ GeneticTrainer::GeneticTrainer(const TrainerPolicy& policy, int programs, int be
 
 void GeneticTrainer::train()
 {
+    policy.initMutator(mutator);
+
     std::vector<std::pair<Program, int>> bestPrograms;
 
     for(int x = 0; x < numPrograms; x++)
